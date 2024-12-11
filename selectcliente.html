@@ -1,0 +1,118 @@
+<?php
+    session_start();
+    require_once('../conexion/conexion.php');
+?>
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Select/Producto</title>
+</head>
+
+<body>
+<!-- Input del carrito con contador -->
+    
+    <?php include('../templates/nav.php'); ?><br>
+    <h2 class="title-productos">PRODUCTOS DE PAPELERÍA</h2>
+    <br>
+    <form method="POST" action="selectcliente.php" enctype="multipart/form-data">
+        <div class="container">
+            <div class="row">
+            <?php 
+            //-- Paginación
+            // Contar total de productos para la categoría seleccionada (Id_categoria = 1)
+            $SQL_REGISTROS = mysqli_query($conexion, "SELECT COUNT(*) AS TOTAL FROM productos p JOIN categoria c ON c.Id_categoria = p.categoria WHERE c.Id_categoria = 1");
+            $RESULT_REGISTROS = mysqli_fetch_array($SQL_REGISTROS);
+            $TOTAL = $RESULT_REGISTROS['TOTAL'];
+
+            $POR_PAGINA = 6; // Mostrar 6 productos por página
+
+            if (empty($_GET['PAGINA'])) {
+                $PAGINA = 1;
+            } else {
+                $PAGINA = $_GET['PAGINA'];
+            }
+
+            $DESDE = ($PAGINA - 1) * $POR_PAGINA;
+            $TOTAL_PAGINAS = ceil($TOTAL / $POR_PAGINA);
+
+            // Consulta para obtener los productos de la categoría 1 (Papelería)
+            $CONSULTA = "SELECT p.Nombre, p.Stock, p.Precio, p.Img, p.Descripcion, c.Nombre AS Categoria
+                         FROM productos p
+                         JOIN categoria c ON c.Id_categoria = p.categoria
+                         WHERE c.Id_categoria = 1
+                         LIMIT $DESDE, $POR_PAGINA";
+            $EJECUTAR = mysqli_query($conexion, $CONSULTA);
+
+            // Mostrar productos
+            while ($FILA = mysqli_fetch_assoc($EJECUTAR)) {
+                $Nombre = $FILA['Nombre'];
+                $Stock = $FILA['Stock'];  
+                $Precio = $FILA['Precio'];
+                $Descripcion = $FILA['Descripcion'];
+                $Img = $FILA['Img'];
+
+                // Generamos cada card
+                
+                
+                echo '
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">' . $Nombre  . '</h5>
+                                <img src="' . $Img . '" class="img-cards" alt="foto del producto"><br>
+                                <label class="card-descri-cliente"><strong></strong> ' . $Descripcion . '</label><br>
+                                <label class="card-precio-cliente"><strong>$</strong> ' . $Precio . '</label><br>
+                                  <button type="button" class="boton-carrito" onclick="añadirAlCarrito(\'' . $Nombre . '\', \'' . $Precio . '\')">AÑADIR AL CARRITO</button>
+                                <button class="boton-comprar">COMPRAR</button>
+                            </div>
+                        </div>
+                    </div>
+                ';
+            }
+            ?>
+
+        
+       
+
+            </div>
+        </div>
+    </form>
+
+    <script>
+        let productosEnCarrito = [];
+        let contador = 0;
+
+        function añadirAlCarrito(nombre, precio) {
+            // Verificar si el producto ya está en el carrito
+            if (productosEnCarrito.includes(nombre)) {
+                alert(`El producto "${nombre}" ya está en el carrito.`);
+                return;
+            }
+
+            // Agregar el producto al carrito
+            productosEnCarrito.push(nombre);
+
+            // Incrementar el contador
+            contador++;
+            
+            // Actualizar el contenido del input
+            const carritoInput = document.getElementById('carritoInput');
+            carritoInput.value = `   ${contador}`;
+
+            alert('Producto añadido al carrito');
+        }
+    </script>
+    <br>
+
+    
+
+    
+
+    
+</body>
+</html>
