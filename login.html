@@ -12,6 +12,7 @@
     <title>Login</title>
 </head>
 <body>
+    <style>
     @import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Aclonica&family=Advent+Pro:ital,wght@0,100..900;1,100..900&family=Almarai:wght@300;400;700;800&family=Anek+Latin:wght@100..800&family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
 
 *{
@@ -3285,6 +3286,7 @@ h2 {
         width: 100%;
     }
 }
+        </style>
 
     <section class="section-login">
             <article class="article-login">
@@ -3301,21 +3303,9 @@ h2 {
                     <button type="submit" class="boton-login">INGRESAR</button>
                     <br><br>
 
-                    <?php
-                    if(isset($_SESSION['ERROR'])){
-                        $ERROR = $_SESSION['ERROR'];
-                        ECHO"<SPAN> $ERROR </ERROR>";
-                    }
-                    ?>
                 </form>
                 <!-- Mostrar mensaje de error solo después de un intento fallido de inicio de sesión -->
-    <?php
-    if (isset($_SESSION['ERROR'])): ?>
-        <script>
-        alert("<?php echo $_SESSION['ERROR']; ?>");
-        </script>
-        <?php unset($_SESSION['ERROR']); // Limpiar el mensaje de error después de mostrarlo ?>
-    <?php endif; ?>
+    
             </article>
         </section>
     
